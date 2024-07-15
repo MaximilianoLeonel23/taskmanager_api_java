@@ -1,0 +1,37 @@
+-- table users
+CREATE TABLE users (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- table tasks
+CREATE TABLE tasks (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255) NOT NULL UNIQUE,
+    description TEXT,
+    status VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    user_id BIGINT,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+-- table tags
+CREATE TABLE tags (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL UNIQUE,
+    user_id BIGINT,
+    FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+-- table task_tag
+CREATE TABLE task_tag (
+    id BIGINT AUTO_INCREMENT PRIMARY KEY,
+    task_id BIGINT,
+    tag_id BIGINT,
+    FOREIGN KEY(task_id) REFERENCES tasks(id),
+    FOREIGN KEY(tag_id) REFERENCES tags(id)
+);
