@@ -27,10 +27,10 @@ public class User {
     @Column(name = "created_at")
     private LocalDateTime createAt;
 
-    public User(UserSignupRequestDTO userDTO) {
-        this.username = userDTO.username();
-        this.email = userDTO.email();
-        this.password = userDTO.password();
+    public User(String usernameDTO, String emailDTO, String passwordDTO) {
+        this.username = usernameDTO;
+        this.email = emailDTO;
+        this.password = passwordDTO;
         this.createAt = LocalDateTime.now();
     }
 }
