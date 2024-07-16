@@ -1,5 +1,6 @@
 package com.taskmanager.api.model;
 
+import com.taskmanager.api.dto.UserSignupRequestDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -25,4 +26,11 @@ public class User {
     private String email;
     @Column(name = "created_at")
     private LocalDateTime createAt;
+
+    public User(UserSignupRequestDTO userDTO) {
+        this.username = userDTO.username();
+        this.email = userDTO.email();
+        this.password = userDTO.password();
+        this.createAt = LocalDateTime.now();
+    }
 }
