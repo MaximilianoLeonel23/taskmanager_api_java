@@ -1,11 +1,14 @@
 package com.taskmanager.api.model;
 
-import com.taskmanager.api.dto.UserSignupRequestDTO;
+import com.taskmanager.api.dto.auth.UserSignUpRequestDTO;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.beans.Encoder;
 import java.time.LocalDateTime;
 
 
@@ -23,6 +26,7 @@ public class User {
     private String username;
     private String password;
     @Column(unique = true)
+    @Email
     private String email;
     @Column(name = "created_at")
     private LocalDateTime createAt;

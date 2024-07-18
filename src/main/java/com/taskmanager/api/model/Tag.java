@@ -1,5 +1,6 @@
 package com.taskmanager.api.model;
 
+import com.taskmanager.api.dto.tag.TagRequestDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -21,4 +22,14 @@ public class Tag {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Tag(TagRequestDTO tagRequestDTO) {
+        this.name = tagRequestDTO.name();
+    }
+
+    public void update(TagRequestDTO tagRequestDTO) {
+        if (tagRequestDTO.name() != null && !tagRequestDTO.name().isBlank()) {
+            this.name = tagRequestDTO.name();
+        }
+    }
 }

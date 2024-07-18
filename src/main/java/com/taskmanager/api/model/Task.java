@@ -1,5 +1,7 @@
 package com.taskmanager.api.model;
 
+import com.taskmanager.api.dto.task.TaskRequestDTO;
+import com.taskmanager.api.dto.task.TaskUpdateRequestDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
@@ -28,4 +30,25 @@ public class Task {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
+
+    public Task(TaskRequestDTO t) {
+        this.title = t.title();
+        this.description = t.description();
+        this.status = Status.valueOf("PENDING");
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void update(TaskUpdateRequestDTO task) {
+        if (task.title() != null && !task.title().isBlank()) {
+            this.title = task.title();
+        }
+        if (task.description() != null && !task.description().isBlank()) {
+            this.description = task.description();
+        }
+        if (task.status() != null && !task.status().name().isEmpty()){
+            this.status = task.status();
+        }
+        this.updatedAt = LocalDateTime.now();
+    }
 }

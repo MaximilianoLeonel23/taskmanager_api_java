@@ -1,41 +1,31 @@
 package com.taskmanager.api.controller;
 
-import com.taskmanager.api.dto.UserDTO;
-import com.taskmanager.api.dto.UserSignupRequestDTO;
-import com.taskmanager.api.dto.UserSignupResponseDTO;
+import com.taskmanager.api.dto.auth.UserSignUpRequestDTO;
+import com.taskmanager.api.dto.auth.UserSignUpResponseDTO;
 import com.taskmanager.api.model.User;
-import com.taskmanager.api.repository.UserRepository;
-import com.taskmanager.api.service.AuthService;
+import com.taskmanager.api.service.AuthenticationService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
 
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
-    AuthService authService;
+    AuthenticationService authService;
 
     @PostMapping("/signup")
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity<UserSignupResponseDTO> registerUser(@RequestBody UserSignupRequestDTO userSignupRequestDTO) {
-        User savedUser = authService.registerUser(userSignupRequestDTO);
-        URI uri = UriComponentsBuilder.fromPath("/users/{id}").buildAndExpand(savedUser.getId()).toUri();
-        return ResponseEntity.created(uri).body(new UserSignupResponseDTO(savedUser.getId(), savedUser.getUsername(), savedUser.getEmail()));
-    }
-
-    @GetMapping("/users/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
-        User userFound = authService.getUserById(id);
-        if (userFound != null) {
-            UserDTO response = new UserDTO(userFound.getId(), userFound.getUsername(), userFound.getEmail(), userFound.getCreateAt());
-            return ResponseEntity.ok(response);
-        }
-        return null;
+    public ResponseEntity<UserSignUpResponseDTO> signUp(@RequestBody @Valid UserSignUpRequestDTO userSignUpRequestDTO) {
+        UserSignUpResponseDTO user = authService.signUp(userSignUpRequestDTO);
+        URI uri = UriComponentsBuilder.fromPath("/auth/signup/{id}").buildAndExpand(user.id()).toUri();
+        return ResponseEntity.created(uri).body(user);
     }
 }
