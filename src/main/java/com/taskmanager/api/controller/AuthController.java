@@ -1,5 +1,7 @@
 package com.taskmanager.api.controller;
 
+import com.taskmanager.api.dto.auth.UserSignInRequestDTO;
+import com.taskmanager.api.dto.auth.UserSignInResponseDTO;
 import com.taskmanager.api.dto.auth.UserSignUpRequestDTO;
 import com.taskmanager.api.dto.auth.UserSignUpResponseDTO;
 import com.taskmanager.api.model.User;
@@ -27,5 +29,11 @@ public class AuthController {
         UserSignUpResponseDTO user = authService.signUp(userSignUpRequestDTO);
         URI uri = UriComponentsBuilder.fromPath("/auth/signup/{id}").buildAndExpand(user.id()).toUri();
         return ResponseEntity.created(uri).body(user);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserSignInResponseDTO> login(@RequestBody @Valid UserSignInRequestDTO userSignInRequestDTO) {
+        UserSignInResponseDTO user = authService.signIn(userSignInRequestDTO);
+        return ResponseEntity.ok(user);
     }
 }

@@ -1,5 +1,8 @@
 package com.taskmanager.api.service;
 
+import com.taskmanager.api.config.TokenService;
+import com.taskmanager.api.dto.auth.UserSignInRequestDTO;
+import com.taskmanager.api.dto.auth.UserSignInResponseDTO;
 import com.taskmanager.api.dto.auth.UserSignUpRequestDTO;
 import com.taskmanager.api.dto.auth.UserSignUpResponseDTO;
 import com.taskmanager.api.model.User;
@@ -16,6 +19,9 @@ public class AuthenticationService {
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
 
+    @Autowired
+    private TokenService tokenService;
+
 
     public UserSignUpResponseDTO signUp(UserSignUpRequestDTO userSignUpRequestDTO) {
         String passwordEncoded = passwordEncoder.encode(userSignUpRequestDTO.password());
@@ -31,5 +37,16 @@ public class AuthenticationService {
                 savedUser.getEmail(),
                 savedUser.getCreateAt()
         );
+    }
+
+    public UserSignInResponseDTO signIn(UserSignInRequestDTO userSignInRequestDTO) {
+        User user = userRepository.findByUsername(userSignInRequestDTO.username())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        if (passwordEncoder.matches(userSignInRequestDTO.password(), user.getPassword())) {
+            String token = tokenService.generateToken(user.getUsername());
+            return new UserSignInResponseDTO(token);
+        } else {
+            throw new RuntimeException("Invalid credentials");
+        }
     }
 }
