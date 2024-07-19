@@ -4,7 +4,9 @@ import com.taskmanager.api.dto.task.TaskRequestDTO;
 import com.taskmanager.api.dto.task.TaskResponseDTO;
 import com.taskmanager.api.dto.task.TaskUpdateRequestDTO;
 import com.taskmanager.api.model.Task;
+import com.taskmanager.api.model.User;
 import com.taskmanager.api.repository.TaskRepository;
+import com.taskmanager.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +19,8 @@ public class TaskService {
 
     @Autowired
     private TaskRepository taskRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     public List<TaskResponseDTO> getAllTasks() {
         return taskRepository.findAll().stream()
@@ -26,7 +30,8 @@ public class TaskService {
                         t.getDescription(),
                         t.getStatus(),
                         t.getCreatedAt(),
-                        t.getUpdatedAt()
+                        t.getUpdatedAt(),
+                        t.getUser().getId()
                 ))
                 .collect(Collectors.toList());
     }
@@ -38,18 +43,26 @@ public class TaskService {
                 task.getDescription(),
                 task.getStatus(),
                 task.getCreatedAt(),
-                task.getUpdatedAt())).orElse(null);
+                task.getUpdatedAt(),
+                task.getUser().getId())).orElse(null);
     }
 
     public TaskResponseDTO createTask(TaskRequestDTO task) {
-        Task newTask = new Task(task);
-        Task createdTask = taskRepository.save(newTask);
-        return new TaskResponseDTO(createdTask.getId(),
-                createdTask.getTitle(),
-                createdTask.getDescription(),
-                createdTask.getStatus(),
-                createdTask.getCreatedAt(),
-                createdTask.getUpdatedAt());
+        Optional<User> userFound = userRepository.findById(task.userId());
+        if (userFound.isPresent()) {
+            User user = userFound.get();
+            Task newTask = new Task(task, user);
+            Task createdTask = taskRepository.save(newTask);
+            return new TaskResponseDTO(createdTask.getId(),
+                    createdTask.getTitle(),
+                    createdTask.getDescription(),
+                    createdTask.getStatus(),
+                    createdTask.getCreatedAt(),
+                    createdTask.getUpdatedAt(),
+                    createdTask.getUser().getId());
+        } else {
+            throw new RuntimeException("User not found");
+        }
     }
 
     public TaskResponseDTO updateTask(TaskUpdateRequestDTO task, Long id) {
@@ -63,7 +76,8 @@ public class TaskService {
                     updatedTask.getDescription(),
                     updatedTask.getStatus(),
                     updatedTask.getCreatedAt(),
-                    updatedTask.getUpdatedAt()
+                    updatedTask.getUpdatedAt(),
+                    updatedTask.getUser().getId()
             );
         }
         return null;

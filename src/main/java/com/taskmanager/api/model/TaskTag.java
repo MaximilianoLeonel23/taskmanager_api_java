@@ -24,4 +24,9 @@ public class TaskTag {
     @ManyToOne
     @JoinColumn(name = "tag_id")
     private Tag tag;
+
+    public TaskTag(Task task, Tag tag) {
+        this.task = task;
+        this.tag = tag;
+    }
 }

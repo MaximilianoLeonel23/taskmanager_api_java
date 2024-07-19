@@ -6,6 +6,11 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name = "Tag")
 @Table(name = "tags")
@@ -21,10 +26,14 @@ public class Tag {
     private String name;
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
+    @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TaskTag> taskTags = new HashSet<>();
 
-    public Tag(TagRequestDTO tagRequestDTO) {
+    public Tag(TagRequestDTO tagRequestDTO, User user) {
         this.name = tagRequestDTO.name();
+        this.user = user;
     }
 
     public void update(TagRequestDTO tagRequestDTO) {

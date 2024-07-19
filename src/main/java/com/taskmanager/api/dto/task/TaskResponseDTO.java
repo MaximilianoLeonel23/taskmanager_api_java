@@ -10,6 +10,7 @@ public record TaskResponseDTO(
         String description,
         Status status,
         LocalDateTime createdAt,
-        LocalDateTime updatedAt
+        LocalDateTime updatedAt,
+        Long userId
 ) {
 }

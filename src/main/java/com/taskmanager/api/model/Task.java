@@ -7,8 +7,12 @@ import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity(name = "Task")
 @Table(name = "tasks")
@@ -29,14 +33,18 @@ public class Task {
 
     @ManyToOne
     @JoinColumn(name = "user_id")
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
+    @OneToMany(mappedBy = "task", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<TaskTag> taskTags = new HashSet<>();
 
-    public Task(TaskRequestDTO t) {
+    public Task(TaskRequestDTO t, User user) {
         this.title = t.title();
         this.description = t.description();
         this.status = Status.valueOf("PENDING");
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        this.user = user;
     }
 
     public void update(TaskUpdateRequestDTO task) {

@@ -2,6 +2,7 @@ package com.taskmanager.api.dto.tag;
 
 public record TagResponseDTO(
         Long id,
-        String name
+        String name,
+        Long userId
 ) {
 }
