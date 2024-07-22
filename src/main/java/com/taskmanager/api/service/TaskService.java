@@ -8,6 +8,9 @@ import com.taskmanager.api.model.User;
 import com.taskmanager.api.repository.TaskRepository;
 import com.taskmanager.api.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,20 +25,19 @@ public class TaskService {
     @Autowired
     private UserRepository userRepository;
 
-    public List<TaskResponseDTO> getAllTasks() {
-        return taskRepository.findAll().stream()
-                .map(t -> new TaskResponseDTO(
-                        t.getId(),
-                        t.getTitle(),
-                        t.getDescription(),
-                        t.getStatus(),
-                        t.getCreatedAt(),
-                        t.getUpdatedAt(),
-                        t.getUser().getId()
-                ))
-                .collect(Collectors.toList());
+    public Page<TaskResponseDTO> getAllTasks(int pageNumber, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Task> tasks = taskRepository.findAll(pageable);
+        return tasks.map(task -> new TaskResponseDTO(
+                task.getId(),
+                task.getTitle(),
+                task.getDescription(),
+                task.getStatus(),
+                task.getCreatedAt(),
+                task.getUpdatedAt(),
+                task.getUser() != null ? task.getUser().getId() : null
+        ));
     }
-
     public TaskResponseDTO getTaskById(Long id) {
         return taskRepository.findById(id).map(task -> new TaskResponseDTO(
                 task.getId(),

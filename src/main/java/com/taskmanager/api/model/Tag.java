@@ -1,5 +1,6 @@
 package com.taskmanager.api.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.taskmanager.api.dto.tag.TagRequestDTO;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -26,9 +27,9 @@ public class Tag {
     private String name;
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @OnDelete(action = OnDeleteAction.CASCADE)
     private User user;
     @OneToMany(mappedBy = "tag", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<TaskTag> taskTags = new HashSet<>();
 
     public Tag(TagRequestDTO tagRequestDTO, User user) {

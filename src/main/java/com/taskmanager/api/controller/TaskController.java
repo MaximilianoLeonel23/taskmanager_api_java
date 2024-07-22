@@ -3,10 +3,12 @@ package com.taskmanager.api.controller;
 import com.taskmanager.api.dto.task.TaskRequestDTO;
 import com.taskmanager.api.dto.task.TaskResponseDTO;
 import com.taskmanager.api.dto.task.TaskUpdateRequestDTO;
+import com.taskmanager.api.model.Task;
 import com.taskmanager.api.repository.TaskRepository;
 import com.taskmanager.api.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,8 +25,8 @@ public class TaskController {
     private TaskService taskService;
 
     @GetMapping()
-    public ResponseEntity<List<TaskResponseDTO>> getAllTask() {
-        List<TaskResponseDTO> tasks = taskService.getAllTasks();
+    public ResponseEntity<Page<TaskResponseDTO>> getAllTask(@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
+        Page<TaskResponseDTO> tasks = taskService.getAllTasks(pageNumber, pageSize);
         return ResponseEntity.ok(tasks);
     }
 

@@ -1,5 +1,6 @@
 package com.taskmanager.api.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.taskmanager.api.dto.auth.UserSignUpRequestDTO;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
@@ -35,6 +36,10 @@ public class User implements UserDetails {
     private String email;
     @Column(name = "created_at")
     private LocalDateTime createAt;
+
+    @OneToMany(mappedBy = "user")
+    @JsonBackReference
+    private List<Task> tasks;
 
     public User(String usernameDTO, String emailDTO, String passwordDTO) {
         this.username = usernameDTO;
