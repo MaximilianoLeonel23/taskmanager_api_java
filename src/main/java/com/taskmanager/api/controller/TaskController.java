@@ -10,6 +10,7 @@ import com.taskmanager.api.service.TaskService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +30,12 @@ public class TaskController {
     public ResponseEntity<Page<TaskResponseDTO>> getAllTask(@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(required = false) Status status, @RequestParam(defaultValue = "asc") String sortByDate) {
         Page<TaskResponseDTO> tasks = taskService.getAllTasks(pageNumber, pageSize, status, sortByDate);
         return ResponseEntity.ok(tasks);
+    }
+
+    @GetMapping("/filterByTagName")
+    public ResponseEntity<Page<TaskResponseDTO>> getTasksByTag(@RequestParam String tagName, Pageable pageable) {
+        Page<TaskResponseDTO> taskResponseDTOPage = taskService.getTasksByTagName(tagName, pageable);
+        return ResponseEntity.ok(taskResponseDTOPage);
     }
 
     @GetMapping("/{id}")

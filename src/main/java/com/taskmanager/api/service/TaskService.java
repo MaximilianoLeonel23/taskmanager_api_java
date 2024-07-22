@@ -105,4 +105,17 @@ public class TaskService {
     public void deleteTask(Long id) {
         taskRepository.deleteById(id);
     }
+
+    public Page<TaskResponseDTO> getTasksByTagName(String tagName, Pageable pageable) {
+        Page<Task> tasks = taskRepository.findByTaskTagsTagName(tagName, pageable);
+        return tasks.map(task -> new TaskResponseDTO(
+                task.getId(),
+                task.getTitle(),
+                task.getDescription(),
+                task.getStatus(),
+                task.getCreatedAt(),
+                task.getUpdatedAt(),
+                task.getUser().getId()
+        ));
+    }
 }
