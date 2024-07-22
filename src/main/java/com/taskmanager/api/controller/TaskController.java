@@ -3,6 +3,7 @@ package com.taskmanager.api.controller;
 import com.taskmanager.api.dto.task.TaskRequestDTO;
 import com.taskmanager.api.dto.task.TaskResponseDTO;
 import com.taskmanager.api.dto.task.TaskUpdateRequestDTO;
+import com.taskmanager.api.model.Status;
 import com.taskmanager.api.model.Task;
 import com.taskmanager.api.repository.TaskRepository;
 import com.taskmanager.api.service.TaskService;
@@ -25,8 +26,8 @@ public class TaskController {
     private TaskService taskService;
 
     @GetMapping()
-    public ResponseEntity<Page<TaskResponseDTO>> getAllTask(@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize) {
-        Page<TaskResponseDTO> tasks = taskService.getAllTasks(pageNumber, pageSize);
+    public ResponseEntity<Page<TaskResponseDTO>> getAllTask(@RequestParam(defaultValue = "0") int pageNumber, @RequestParam(defaultValue = "10") int pageSize, @RequestParam(required = false) Status status, @RequestParam(defaultValue = "asc") String sortByDate) {
+        Page<TaskResponseDTO> tasks = taskService.getAllTasks(pageNumber, pageSize, status, sortByDate);
         return ResponseEntity.ok(tasks);
     }
 

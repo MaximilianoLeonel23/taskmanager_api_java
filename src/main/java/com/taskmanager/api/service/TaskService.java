@@ -3,14 +3,18 @@ package com.taskmanager.api.service;
 import com.taskmanager.api.dto.task.TaskRequestDTO;
 import com.taskmanager.api.dto.task.TaskResponseDTO;
 import com.taskmanager.api.dto.task.TaskUpdateRequestDTO;
+import com.taskmanager.api.model.Status;
 import com.taskmanager.api.model.Task;
 import com.taskmanager.api.model.User;
 import com.taskmanager.api.repository.TaskRepository;
 import com.taskmanager.api.repository.UserRepository;
+import com.taskmanager.api.util.task.TaskSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -25,9 +29,22 @@ public class TaskService {
     @Autowired
     private UserRepository userRepository;
 
-    public Page<TaskResponseDTO> getAllTasks(int pageNumber, int pageSize) {
-        Pageable pageable = PageRequest.of(pageNumber, pageSize);
-        Page<Task> tasks = taskRepository.findAll(pageable);
+    public Page<TaskResponseDTO> getAllTasks(int pageNumber, int pageSize, Status status, String sortByDate) {
+        Sort sort = Sort.by("createdAt");
+        if ("desc".equalsIgnoreCase(sortByDate)) {
+            sort = sort.descending();
+        } else {
+            sort = sort.ascending();
+        }
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+
+        Specification<Task> spec = Specification
+                .where(TaskSpecification.hasStatus(status));
+
+        Page<Task> tasks = taskRepository.findAll(spec, pageable);
+
+
         return tasks.map(task -> new TaskResponseDTO(
                 task.getId(),
                 task.getTitle(),
